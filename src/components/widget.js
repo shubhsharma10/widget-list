@@ -1,18 +1,27 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {addWidget, deleteWidget} from '../actions/index'
-import {SELECT_WIDGET_TYPE} from '../constants/index'
+import {addWidget, deleteWidget, headingSizeChanged,changeWidgetType} from '../actions/index'
 
-const Heading = () => (
+const Heading = ({widget,headingSizeChanged}) => {
+    let selectElem;
+
+    return(
     <div>
-        <h2>Heading</h2>
-        <select>
-            <option>Heading 1</option>
-            <option>Heading 2</option>
-            <option>Heading 3</option>
+        <h2>Heading {widget.size}</h2>
+        <select onChange={() => headingSizeChanged(widget.id,selectElem.value)}
+                ref={node => selectElem = node}>
+            <option value="1">Heading 1</option>
+            <option value="2">Heading 2</option>
+            <option value="3">Heading 3</option>
         </select>
-    </div>
-);
+    </div>);
+};
+
+const dispatchToPropsMapper = (dispatch) => ({
+   headingSizeChanged: (widgetId,newSize) => headingSizeChanged(dispatch,widgetId,newSize)
+});
+
+const HeadingContainer = connect(null,dispatchToPropsMapper)(Heading);
 
 const Paragraph = () => (
     <div>
@@ -30,19 +39,13 @@ const List = () => (
 );
 
 
-const WidgetComponent = ({widget,dispatch}) => {
+const WidgetComponent = ({widget,changeWidgetType,deleteWidget}) => {
     let select;
     return(
         <li>
             {widget.text} {widget.widgetType}
             <select value={widget.widgetType} ref={node => select = node}
-
-                    onChange={e =>
-                        dispatch({
-                            type: SELECT_WIDGET_TYPE,
-                            id: widget.id,
-                            widgetType: select.value
-                    })}>
+                    onChange={() => changeWidgetType(widget.id,select.value)}>
                 <option>Heading</option>
                 <option>Paragraph</option>
                 <option>List</option>
@@ -50,12 +53,12 @@ const WidgetComponent = ({widget,dispatch}) => {
             </select>
             <button onClick={e => {
                 e.preventDefault();
-                dispatch(deleteWidget(widget.id));
+                deleteWidget(widget.id);
             }}>
                 Delete
             </button>
             <div>
-                {widget.widgetType==='Heading' && <Heading/>}
+                {widget.widgetType==='Heading' && <HeadingContainer widget={widget}/>}
                 {widget.widgetType==='Paragraph' && <Paragraph/>}
                 {widget.widgetType==='List' && <List/>}
                 {widget.widgetType==='Image' && <Image/>}
@@ -79,9 +82,14 @@ class AddWidgetComponent extends React.Component{
     }
 }
 
+const mapDispatchToProps3 = (dispatch) => ({
+    deleteWidget: (id) => deleteWidget(dispatch,id),
+    changeWidgetType: (id,newType) => changeWidgetType(dispatch,id,newType)
+});
+
 const mapDispatchToProps2 = (dispatch) => ({
     addWidget: (text) => addWidget(dispatch,text)
 });
 
-export const Widget = connect()(WidgetComponent);
+export const Widget = connect(null,mapDispatchToProps3)(WidgetComponent);
 export const AddWidget = connect(null,mapDispatchToProps2)(AddWidgetComponent);

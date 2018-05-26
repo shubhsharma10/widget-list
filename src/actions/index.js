@@ -4,8 +4,8 @@ export const addWidget = (dispatch,text) => {
     dispatch({type: constants.ADD, text: text});
 };
 
-export const deleteWidget = (id) => {
-    return ({type: constants.DELETE, id: id});
+export const deleteWidget = (dispatch,id) => {
+    dispatch({type: constants.DELETE, id: id});
 };
 
 export const findAllWidgets = (dispatch) => {
@@ -20,5 +20,21 @@ export const findAllWidgets = (dispatch) => {
 export const saveWidgets = dispatch => {
     dispatch({
         type: constants.SAVE
+    });
+};
+
+export const changeWidgetType = (dispatch,widgetId,newType) => {
+    dispatch({
+        type: constants.SELECT_WIDGET_TYPE,
+        id: widgetId,
+        widgetType: newType
+    });
+};
+
+export const headingSizeChanged = (dispatch,widgetId,newSize) => {
+    dispatch({
+        type: constants.HEADING_SIZE_CHANGED,
+        id: widgetId,
+        size: newSize
     });
 };
