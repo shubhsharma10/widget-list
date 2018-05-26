@@ -17,8 +17,6 @@ const WidgetComponent = ({widget,dispatch}) => (
     </li>
 );
 
-const Widget = connect()(WidgetComponent);
-
 class WidgetListComponent extends React.Component {
 
     constructor(props){
@@ -30,6 +28,7 @@ class WidgetListComponent extends React.Component {
         return(
             <div className="container-fluid">
                 <h1>Widget List {this.props.widgets.length}</h1>
+                <button onClick={this.props.saveWidgets}>Save Widgets</button>
                 <ul>
                     {this.props.widgets.map(widget =>
                         <Widget key={widget.id} widget={widget}/>)}
@@ -40,32 +39,34 @@ class WidgetListComponent extends React.Component {
 }
 
 
-let nextWidgetId = 2;
-let initialState = {
-    widgets: [
-        {text: 'Widget 1', id: 0},
-        {text: 'Widget 2', id: 1}
-    ]
-};
-
-const AddWidgetComponent = ({dispatch}) => {
-    let input;
-    return(
-        <div className="container-fluid justify-content-right">
-            <input ref={node => input = node}/>
-            <button onClick={e => {
-                e.preventDefault();
-                dispatch(addWidget(input.value));
-                input.value = ''
-            }}>Add Widget</button>
-        </div>
-    );
-};
+class AddWidgetComponent extends React.Component{
+    render() {
+        let input;
+        return (
+            <div className="container-fluid justify-content-right">
+                <input ref={node => input = node}/>
+                <button onClick={() => this.props.addWidget(input.value)}>
+                    Add Widget
+                </button>
+            </div>
+        );
+    }
+}
 
 // Reducer
 
 const widgetReducer = (state={widgets: []},action) => {
   switch (action.type) {
+      case 'SAVE_WIDGETS':
+          alert('Saved Widgets to database');
+          fetch('http://localhost:8080/api/widget/save', {
+              method: 'post',
+              body: JSON.stringify(state.widgets),
+              headers: {
+                  'content-type': 'application/json'
+              }
+          });
+          return state;
       case 'FIND_ALL_WIDGETS':
           return{widgets: action.widgets};
 
@@ -73,7 +74,7 @@ const widgetReducer = (state={widgets: []},action) => {
           return {widgets:
               [...state.widgets,
                   {
-                      id: state.widgets.length+1,
+                      id: state.widgets.length+4,
                       text: action.text
                   }]
           };
@@ -87,16 +88,11 @@ const widgetReducer = (state={widgets: []},action) => {
 
 const rootReducer = combineReducers({widgetReducer});
 
-// Store
-const store = createStore(widgetReducer);
 
-// connect parameters
-const mapStateToProps = (state) => ({
-    widgets: state.widgets
-});
+// ACTIONS
 
-const addWidget = (text) => {
-    return({type: 'ADD_WIDGET', text: text});
+const addWidget = (dispatch,text) => {
+    dispatch({type: 'ADD_WIDGET', text: text});
 };
 
 const deleteWidget = (id) => {
@@ -112,12 +108,31 @@ const findAllWidgets = (dispatch) => {
         }));
 };
 
+const saveWidgets = dispatch => {
+    dispatch({
+            type: 'SAVE_WIDGETS'
+        });
+};
+
+// connect parameters
+const mapStateToProps = (state) => ({
+    widgets: state.widgets
+});
+
 const mapDispatchToProps = (dispatch) => ({
-        findAllWidgets: () => findAllWidgets(dispatch)
+        findAllWidgets: () => findAllWidgets(dispatch),
+        saveWidgets: () => saveWidgets(dispatch)
+});
+
+const mapDispatchToProps2 = (dispatch) => ({
+    addWidget: (text) => addWidget(dispatch,text)
 });
 
 // Connect to redux
-const AddWidget = connect()(AddWidgetComponent);
+// Store
+const store = createStore(widgetReducer);
+const Widget = connect()(WidgetComponent);
+const AddWidget = connect(null,mapDispatchToProps2)(AddWidgetComponent);
 const WidgetsList = connect(mapStateToProps,mapDispatchToProps)(WidgetListComponent);
 
 const App = () => (
