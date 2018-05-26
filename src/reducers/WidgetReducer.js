@@ -34,7 +34,7 @@ export const widgetReducer = (state={widgets: [],preview: false},action) => {
 
         case constants.SAVE:
             alert('Saved Widgets to database');
-            fetch('http://localhost:8080/api/widget/save', {
+            fetch('https://cs5610-summer1-2018-ssharma.herokuapp.com/api/widget/save', {
                 method: 'post',
                 body: JSON.stringify(state.widgets),
                 headers: {

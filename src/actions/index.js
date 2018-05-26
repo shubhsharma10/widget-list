@@ -9,7 +9,7 @@ export const deleteWidget = (dispatch,id) => {
 };
 
 export const findAllWidgets = (dispatch) => {
-    fetch('http://localhost:8080/api/widget')
+    fetch('https://cs5610-summer1-2018-ssharma.herokuapp.com/api/widget')
         .then(response => (response.json()))
         .then(widgets => dispatch({
             type: constants.FIND_ALL,
