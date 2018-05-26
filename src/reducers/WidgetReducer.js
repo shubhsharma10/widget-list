@@ -2,6 +2,18 @@ import * as constants from '../constants/index'
 
 export const widgetReducer = (state={widgets: []},action) => {
     switch (action.type) {
+        case constants.SELECT_WIDGET_TYPE:
+            let newState =  {
+                widgets:
+                    state.widgets.filter((widget)=>
+                        {
+                            if(widget.id === action.id) {
+                                widget.widgetType = action.widgetType;
+                            }
+                            return true;
+                        })};
+            return JSON.parse(JSON.stringify(newState));
+
         case constants.SAVE:
             alert('Saved Widgets to database');
             fetch('http://localhost:8080/api/widget/save', {
@@ -20,7 +32,8 @@ export const widgetReducer = (state={widgets: []},action) => {
                 [...state.widgets,
                     {
                         id: state.widgets.length+4,
-                        text: action.text
+                        text: action.text,
+                        widgetType: 'Paragraph'
                     }]
             };
         case constants.DELETE:

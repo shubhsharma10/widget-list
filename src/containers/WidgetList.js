@@ -12,10 +12,10 @@ class WidgetListComponent extends React.Component {
 
     render() {
         return(
-            <div className="container-fluid">
+            <div>
                 <h1>Widget List {this.props.widgets.length}</h1>
                 <button onClick={this.props.saveWidgets}>Save Widgets</button>
-                <ul>
+                <ul className="list-group">
                     {this.props.widgets.map(widget =>
                         <Widget key={widget.id} widget={widget}/>)}
                 </ul>
