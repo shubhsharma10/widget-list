@@ -21,9 +21,15 @@ const Widget = connect()(WidgetComponent);
 
 class WidgetListComponent extends React.Component {
 
+    constructor(props){
+        super(props);
+        this.props.findAllWidgets()
+    }
+
     render() {
         return(
             <div className="container-fluid">
+                <h1>Widget List {this.props.widgets.length}</h1>
                 <ul>
                     {this.props.widgets.map(widget =>
                         <Widget key={widget.id} widget={widget}/>)}
@@ -58,8 +64,11 @@ const AddWidgetComponent = ({dispatch}) => {
 
 // Reducer
 
-const widgetReducer = (state=initialState,action) => {
+const widgetReducer = (state={widgets: []},action) => {
   switch (action.type) {
+      case 'FIND_ALL_WIDGETS':
+          return{widgets: action.widgets};
+
       case 'ADD_WIDGET':
           return {widgets:
               [...state.widgets,
@@ -94,13 +103,22 @@ const deleteWidget = (id) => {
     return ({type: 'DELETE_WIDGET', id: id});
 };
 
-// const mapDispatchToProps = (dispatch) => ({
-//         deleteWidget: (id) => addWidget(dispatch,text)
-// });
+const findAllWidgets = (dispatch) => {
+    fetch('http://localhost:8080/api/widget')
+        .then(response => (response.json()))
+        .then(widgets => dispatch({
+        type: 'FIND_ALL_WIDGETS',
+        widgets: widgets
+        }));
+};
+
+const mapDispatchToProps = (dispatch) => ({
+        findAllWidgets: () => findAllWidgets(dispatch)
+});
 
 // Connect to redux
 const AddWidget = connect()(AddWidgetComponent);
-const WidgetsList = connect(mapStateToProps)(WidgetListComponent);
+const WidgetsList = connect(mapStateToProps,mapDispatchToProps)(WidgetListComponent);
 
 const App = () => (
     <div>
