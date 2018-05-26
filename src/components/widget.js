@@ -35,7 +35,7 @@ const WidgetComponent = ({widget,dispatch}) => {
     return(
         <li>
             {widget.text} {widget.widgetType}
-            <select ref={node => select = node}
+            <select value={widget.widgetType} ref={node => select = node}
 
                     onChange={e =>
                         dispatch({
