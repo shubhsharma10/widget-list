@@ -1,6 +1,6 @@
 import * as constants from '../constants/index'
 
-export const widgetReducer = (state={widgets: []},action) => {
+export const widgetReducer = (state={widgets: [],preview: false},action) => {
     switch (action.type) {
         case constants.HEADING_TEXT_CHANGED:
             return {
@@ -42,6 +42,11 @@ export const widgetReducer = (state={widgets: []},action) => {
                 }
             });
             return state;
+
+        case constants.PREVIEW:
+            newState = Object.assign({},state);
+            newState.preview = !newState.preview;
+            return newState;
         case constants.FIND_ALL:
             return{widgets: action.widgets};
 
@@ -51,8 +56,9 @@ export const widgetReducer = (state={widgets: []},action) => {
                     {
                         id: state.widgets.length+4,
                         widgetType: 'Paragraph',
-                        size: '2'
-                    }]
+                        size: '2',
+                        text: 'New Widget'
+                    }],
             };
         case constants.DELETE:
             return {widgets:

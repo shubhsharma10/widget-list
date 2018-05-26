@@ -23,6 +23,12 @@ export const saveWidgets = dispatch => {
     });
 };
 
+export const previewWidgets = dispatch => {
+    dispatch({
+        type: constants.PREVIEW
+    });
+};
+
 export const changeWidgetType = (dispatch,widgetId,newType) => {
     dispatch({
         type: constants.SELECT_WIDGET_TYPE,
