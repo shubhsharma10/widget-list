@@ -1,7 +1,7 @@
 import * as constants from '../constants/index'
 
-export const addWidget = (dispatch,text) => {
-    dispatch({type: constants.ADD, text: text});
+export const addWidget = (dispatch) => {
+    dispatch({type: constants.ADD});
 };
 
 export const deleteWidget = (dispatch,id) => {
@@ -36,5 +36,13 @@ export const headingSizeChanged = (dispatch,widgetId,newSize) => {
         type: constants.HEADING_SIZE_CHANGED,
         id: widgetId,
         size: newSize
+    });
+};
+
+export const headingTextChanged = (dispatch,widgetId,newText) => {
+    dispatch({
+        type: constants.HEADING_TEXT_CHANGED,
+        id: widgetId,
+        text: newText
     });
 };

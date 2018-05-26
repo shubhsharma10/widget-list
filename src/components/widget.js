@@ -1,13 +1,17 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {addWidget, deleteWidget, headingSizeChanged,changeWidgetType} from '../actions/index'
+import {addWidget, deleteWidget, headingSizeChanged,changeWidgetType,headingTextChanged} from '../actions/index'
 
-const Heading = ({widget,headingSizeChanged}) => {
+const Heading = ({widget,headingSizeChanged,headingTextChanged}) => {
     let selectElem;
+    let inputElem;
 
     return(
     <div>
         <h2>Heading {widget.size}</h2>
+        <input onChange={()=> headingTextChanged(widget.id,inputElem.value)}
+                ref={node => inputElem = node}
+                value={widget.text}/>
         <select onChange={() => headingSizeChanged(widget.id,selectElem.value)}
                 ref={node => selectElem = node}
                 value={widget.size}>
@@ -15,11 +19,17 @@ const Heading = ({widget,headingSizeChanged}) => {
             <option value="2">Heading 2</option>
             <option value="3">Heading 3</option>
         </select>
+        <div>
+            {widget.size === "1" && <h1>{widget.text}</h1>}
+            {widget.size === "2" && <h2>{widget.text}</h2>}
+            {widget.size === "3" && <h3>{widget.text}</h3>}
+        </div>
     </div>);
 };
 
 const dispatchToPropsMapper = (dispatch) => ({
-   headingSizeChanged: (widgetId,newSize) => headingSizeChanged(dispatch,widgetId,newSize)
+   headingSizeChanged: (widgetId,newSize) => headingSizeChanged(dispatch,widgetId,newSize),
+    headingTextChanged: (widgetId,newText) => headingTextChanged(dispatch,widgetId,newText)
 });
 
 const HeadingContainer = connect(null,dispatchToPropsMapper)(Heading);
@@ -44,7 +54,7 @@ const WidgetComponent = ({widget,changeWidgetType,deleteWidget}) => {
     let select;
     return(
         <li>
-            {widget.text} {widget.widgetType}
+            {widget.id} {widget.widgetType}
             <select value={widget.widgetType} ref={node => select = node}
                     onChange={() => changeWidgetType(widget.id,select.value)}>
                 <option>Heading</option>
@@ -71,11 +81,9 @@ const WidgetComponent = ({widget,changeWidgetType,deleteWidget}) => {
 
 class AddWidgetComponent extends React.Component{
     render() {
-        let input;
         return (
             <div>
-                <input ref={node => input = node}/>
-                <button onClick={() => this.props.addWidget(input.value)}>
+                <button onClick={() => this.props.addWidget()}>
                     Add Widget
                 </button>
             </div>
@@ -89,7 +97,7 @@ const mapDispatchToProps3 = (dispatch) => ({
 });
 
 const mapDispatchToProps2 = (dispatch) => ({
-    addWidget: (text) => addWidget(dispatch,text)
+    addWidget: () => addWidget(dispatch)
 });
 
 export const Widget = connect(null,mapDispatchToProps3)(WidgetComponent);

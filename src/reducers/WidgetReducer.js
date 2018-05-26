@@ -2,6 +2,15 @@ import * as constants from '../constants/index'
 
 export const widgetReducer = (state={widgets: []},action) => {
     switch (action.type) {
+        case constants.HEADING_TEXT_CHANGED:
+            return {
+                widgets: state.widgets.map(widget => {
+                    if(widget.id === action.id) {
+                        widget.text = action.text;
+                    }
+                    return Object.assign({}, widget);
+                })
+            };
         case constants.HEADING_SIZE_CHANGED:
             return {
                 widgets: state.widgets.map(widget => {
@@ -41,8 +50,8 @@ export const widgetReducer = (state={widgets: []},action) => {
                 [...state.widgets,
                     {
                         id: state.widgets.length+4,
-                        text: action.text,
-                        widgetType: 'Paragraph'
+                        widgetType: 'Paragraph',
+                        size: '2'
                     }]
             };
         case constants.DELETE:
